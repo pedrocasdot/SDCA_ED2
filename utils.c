@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /*
     Usando cifra de césar para encriptar e 
@@ -11,7 +12,7 @@ char *encriptarSenha(char *senha) {
     for(int i = 0; senha[i] != '\0'; i++){
         if(isalpha(senha[i])){
             if(isalpha(senha[i]))
-                senha[i] = char(((((toLower(senha[i]) - 97) - 3)%26) + 97));
+                senha[i] = ((((toLower(senha[i]) - 97) - 3)%26) + 97);
         }    
     }
 	return senha;
@@ -20,7 +21,7 @@ char *encriptarSenha(char *senha) {
 char *decriptarSenha(char *senha) {
     for(int i = 0; senha[i] != '\0'; i++){
         if(isalpha(senha[i]))
-            senha[i] = char(((((toLower(senha[i]) - 97) - 3)%26) + 97));
+            senha[i] = (((((toLower(senha[i]) - 97) - 3)%26) + 97));
     }
 	return senha;
 }

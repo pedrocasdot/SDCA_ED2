@@ -20,9 +20,9 @@ HashTable* criarTabelaHash();
 
 int calcularHash(char *chave);
 
-bool inserirUsuario(HashTable* tabela, char * chave, char *senha);
+bool inserirUsuario(HashTable* tabela, char * nome_usuario, char * senha);
 
-bool buscarUsuario(HashTable* tabela, char *chave);
+bool buscarUsuario(HashTable* tabela, char *nome_usuario);
 
 bool atualizarSenhaUsuario(HashTable * tabela, char *chave, char * senha_antiga, char * senha_nova);
 

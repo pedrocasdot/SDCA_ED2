@@ -91,11 +91,13 @@ bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
                 noAnterior->prox = noAtual->prox;
             }
             free(noAtual);
+            return true;
         }
         noAnterior = noAtual;
         noAtual = noAtual->prox;
     }
-    return true;    
+    printf("Usuário inexistente.\n");
+    return false;
 }
 bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_antiga, char *senha_nova){
     if(!tabela){
