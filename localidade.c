@@ -99,9 +99,12 @@ void imprimirLigacoes(Localidade *localidade){
         }
     }
 }
-void imprimirLigacoesOtimizadas(Localidade *localidade){}
-int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
+
+void imprimirLigacoesOtimizadas(Localidade *localidade){
     
+}
+int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
+
 }
 void adicionarPonto(Localidade * localidade, int pontoA, int pontoB, int distancia){}
 void destruirSimulacao(Localidade * localidade){}
