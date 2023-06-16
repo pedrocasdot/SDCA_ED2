@@ -8,6 +8,7 @@
     Funcao para criar o grafo inicial(Localidade)
 */
 Localidade *criarLocalidade(int pontos, int ruas){
+    Localidade *nova_localidae = (Localidade *)malloc((pontos +1)*sizeof(Localidade));
     
 }
 /*
