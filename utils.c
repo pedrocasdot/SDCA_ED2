@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include "utils.h"
 
 /*
     Usando cifra de césar para encriptar e 
@@ -10,22 +11,36 @@
 */
 
 char *encriptarSenha(char *senha) {
-    for(int i = 0; senha[i] != '\0'; i++){
+    char* resultado = (char*)malloc((strlen(senha) + 1) * sizeof(char));
+    for(int i = 0; i < strlen(senha); i++){
         if(isalpha(senha[i])){
-            if(isalpha(senha[i]))
-                senha[i] = ((((tolower(senha[i]) - 97) + 3)%26) + 97);
-        }    
+            resultado[i]= ((tolower(senha[i]) - 'a' + 3) % 26) + 'a';
+        }else resultado[i] = senha[i];    
     }
-	return senha;
+    return resultado;
 }
 
 char *decriptarSenha(char *senha) {
-    for(int i = 0; senha[i] != '\0'; i++){
-        if(isalpha(senha[i]))
-            senha[i] = (((((tolower(senha[i]) - 97) - 3)%26) + 97));
+    char* resultado = (char*)malloc((strlen(senha) + 1) * sizeof(char));
+    for(int i = 0; i < strlen(senha); i++){
+        if(isalpha(senha[i])){
+            resultado[i]= ((tolower(senha[i]) - 'a' - 3) % 26) + 'a';
+        }else resultado[i] = senha[i];    
     }
-	return senha;
+    return resultado;
 }
+
+char *tudoMinusculo(char *string) {
+    char* resultado = (char*)malloc((strlen(string) + 1) * sizeof(char));
+    for(int i = 0; i < strlen(string); i++){
+        if(isalpha(string[i])){
+            resultado[i]= tolower(string[i]);
+        }else resultado[i] = string[i];    
+    }
+    return resultado;
+}
+
+
 
 /*
     CRITÉRIOS DE VALIDAÇÃO DE SENHA:

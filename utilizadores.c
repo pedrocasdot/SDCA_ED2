@@ -2,17 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "hashtable.h"
 #include "utils.h"
+#include "utilizadores.h"
 
 HashTable* criarTabelaHash() {
     HashTable* tabela = (HashTable*)malloc(sizeof(HashTable));
     tabela->array = (HashNode**)malloc(TABLE_SIZE * sizeof(HashNode*));
-
     for (int i = 0; i < TABLE_SIZE; i++) {
         tabela->array[i] = NULL;
     }
-
     return tabela;
 }
 
@@ -24,7 +22,7 @@ int calcularHash(char *chave) {
 	return hash_soma % TABLE_SIZE;
 }
 
-bool inserirUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
+bool inserirUsuario(HashTable* tabela, char *nome_usuario, char * senha) {
     int indice = calcularHash(nome_usuario);
     if(buscarUsuario(tabela,  nome_usuario) != NULL){
         printf("Nome de usuário já existente no sistema.\n");
@@ -49,10 +47,10 @@ bool inserirUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
 
 HashNode * buscarUsuario(HashTable* tabela, char *nome_usuario) {
     
-    int indice = calcularHash(chave);
+    int indice = calcularHash(nome_usuario);
     HashNode* noAtual = tabela->array[indice];
     while (noAtual != NULL) {
-        if (strcmp(noAtual->chave, chave) == 0) {
+        if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
             return noAtual;
         }
         noAtual = noAtual->prox;
@@ -61,12 +59,12 @@ HashNode * buscarUsuario(HashTable* tabela, char *nome_usuario) {
 }
 
 bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
-    HashNode *no = buscar(tabela, nome_usuario);
+    HashNode *no = buscarUsuario(tabela, nome_usuario);
     if(no == NULL){
         printf("Usuário inexistente.\n");
         return false;
     }    
-    if(strcmp(no->nome_usuario, nome_usuario) == 0 && strcmp(decriptarSenha(no->senha), senha) == 0){
+    if(strcmp(no->nome_usuario, nome_usuario) == 0 && strcmp(decriptarSenha(no->senha), tudoMinusculo(senha)) == 0){
         return true;
     }else{
         printf("Senha incorrecta, tente novamente.\n");
@@ -75,13 +73,15 @@ bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
 }
 
 bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
-    int indice = calcularHash(chave);
+    int indice = calcularHash(nome_usuario);
     HashNode* noAtual = tabela->array[indice];
     HashNode* noAnterior = NULL;
     
     while (noAtual != NULL) {
         if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
-            if(strcmp(decriptarSenha(noAtual->senha),  senha) != 0){
+            puts(tudoMinusculo(senha));
+            puts(decriptarSenha(noAtual->senha));
+            if(strcmp(decriptarSenha(noAtual->senha),  tudoMinusculo(senha)) != 0){
                 printf("Senha de usuário incorrecta.\n");
                 return false;
             }
@@ -91,6 +91,7 @@ bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
                 noAnterior->prox = noAtual->prox;
             }
             free(noAtual);
+            printf("Usuario '%s' foi removido com sucesso.\n", nome_usuario);
             return true;
         }
         noAnterior = noAtual;
@@ -104,20 +105,20 @@ bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_
         printf("Nenhum usuario registrado\n");
         return false;
     }
-    HashNode *no = buscar(tabela, nome_usuario);
+    HashNode *no = buscarUsuario(tabela, nome_usuario);
     if(no == NULL){
         printf("Usuario inexistente\n");
         return false;
     }
     if(strcmp(decriptarSenha(no->senha), senha_antiga) == 0){
         if(!validarSenha(senha_nova)){
-            printf("A senha deve ter no mínimo 3 caracteres e uma letra do alfabeto\n");
+            printf("A senha deve ter no mínimo 3 caracteres e uma letra do alfabeto.\n");
             return false;
         }
-        no->senha = strdup(encriptarSenha(senha_nova));    
-        printf("A senha para o usuário %s foi alterada com sucesso\n", nome_usuario);
+        no->senha = encriptarSenha(senha_nova);
+        printf("A senha para o usuário %s foi alterada com sucesso.\n", nome_usuario);
     }else{
-        printf("Senha inválida para este nome de usuário, tente novamente...");
+        printf("Senha inválida para este nome de usuário, tente novamente....\n");
         return false;
     }
     return true;

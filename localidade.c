@@ -8,7 +8,7 @@
     Funcao para criar o grafo inicial(Localidade)
 */
 Localidade *criarLocalidade(int pontos, int ruas){
-
+    
 }
 /*
     Funcao para remover vértice(PONTO) do grafo (LOCALIDADE)
