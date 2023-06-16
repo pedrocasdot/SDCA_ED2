@@ -6,15 +6,21 @@ typedef struct No{
     struct No *prox;    
 }No;
 
+typedef struct AdjList{
+    No *principal; 
+}AdjList;
+
+
+
 typedef struct Localidade{
     int numero_pontos;
-    No * ruas;
+    AdjList * ruas;
 }Localidade;
 
 
 Localidade *removerPonto(Localidade *localidade, int ponto);
 Localidade *criarLocalidade(int pontos, int ruas);
-Localidade *adicionarRua(Localidade *localidade, int pontoA, int pontoB);
+void adicionarRua(Localidade *localidade, int pontoA, int pontoB, int distancia);
 Localidade *removerRua(Localidade *localidade, int pontoA, int pontoB);
 void actualizarDistancia(Localidade *localidade, int pontoA, int pontoB, int novaDistancia);
 void imprimirLigacoes(Localidade *localidade);
