@@ -56,3 +56,5 @@ bool validarSenha(char *senha){
     }
     return strlen(senha) >= 3 && hasAlpha;
 }
+
+

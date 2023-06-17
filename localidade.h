@@ -10,8 +10,6 @@ typedef struct AdjList{
     No *principal; 
 }AdjList;
 
-
-
 typedef struct Localidade{
     int numero_pontos;
     AdjList * ruas;
