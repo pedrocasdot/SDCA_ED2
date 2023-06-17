@@ -25,10 +25,10 @@ Localidade *criarLocalidade(int pontos, int ruas){
     
     nova_localidade->numero_pontos = pontos;
 
-    nova_localidade->ruas = (AdjList *)malloc(pontos * sizeof(AdjList));
+    nova_localidade->ruas = (AdjList *)malloc((pontos  + 1)* sizeof(AdjList));
 
     int i = 0;
-    for( ; i < pontos; i++){
+    for( ; i < pontos + 1; i++){
         nova_localidade->ruas[i].principal = NULL;
     }
     
@@ -44,7 +44,45 @@ Localidade *criarLocalidade(int pontos, int ruas){
 /*
     Funcao para remover vértice(PONTO) do grafo (LOCALIDADE)
 */
-Localidade *removerPonto(Localidade *localidade, int ponto){}
+void removerPonto(Localidade *localidade, int ponto){
+    No *aux;
+    /*
+        Para cada lista associada a um ponto, remove-se o ponto a ser
+        procurado.
+    */
+    for(int i = 0; i < localidade->numero_pontos + 1; i++){
+        aux = localidade->ruas[i].principal;
+
+        // Verificar se o primeiro nó precisa ser removido
+        while (aux != NULL && aux->destino == ponto) {
+            No *temp = aux;
+            aux = aux->prox;
+            localidade->ruas[i].principal = aux;  // Atualizar o ponteiro principal
+            free(temp);
+        }
+
+        // Remover outros nós
+        while (aux != NULL && aux->prox != NULL) {
+            if (aux->prox->destino == ponto) {
+                No *temp = aux->prox;
+                aux->prox = temp->prox;
+                free(temp);
+            } else {
+                aux = aux->prox;
+            }
+        }
+    }
+    /*
+        Depois remove-se a lista do ponto em questão
+    */
+    aux = localidade->ruas[ponto].principal;
+    while(aux){
+        No *temp = aux;
+        aux = aux->prox;
+        localidade->ruas[ponto].principal = aux;
+        free(temp);
+    }
+}
 
 /*
     Funcao para adicionar rua(ARESTA -> (A <---> B => distancia)) do grafo (LOCALIDADE)
@@ -63,7 +101,8 @@ void adicionarRua(Localidade *localidade, int pontoA, int pontoB, int distancia)
             aux = aux->prox;
         aux->prox = novoNo;
     }
-
+    // assumindo que o grafo não é direcionado
+    // então se A ---> B, B ---> A => A <--> B
     novoNo = novo_no(pontoA, distancia);
 
     if(localidade->ruas[pontoB].principal == NULL){

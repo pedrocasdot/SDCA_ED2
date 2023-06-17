@@ -24,6 +24,9 @@ int main(){
     */
     Localidade *localidade = criarLocalidade(4, 3);
     imprimirLigacoes(localidade);
+    removerPonto(localidade, 1);
+    puts("depois de remover 1");
+    imprimirLigacoes(localidade);
     
     return 0;
 }

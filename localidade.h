@@ -18,7 +18,7 @@ typedef struct Localidade{
 }Localidade;
 
 
-Localidade *removerPonto(Localidade *localidade, int ponto);
+void removerPonto(Localidade *localidade, int ponto);
 Localidade *criarLocalidade(int pontos, int ruas);
 void adicionarRua(Localidade *localidade, int pontoA, int pontoB, int distancia);
 Localidade *removerRua(Localidade *localidade, int pontoA, int pontoB);
