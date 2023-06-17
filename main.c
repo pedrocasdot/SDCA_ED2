@@ -22,11 +22,12 @@ int main(){
         puts("USUARIO EXISTENTE");
     }
     */
-    Localidade *localidade = criarLocalidade(4, 3);
+    Localidade*localidade = criarLocalidade(4, 3);
     imprimirLigacoes(localidade);
     removerPonto(localidade, 1);
     puts("depois de remover 1");
     imprimirLigacoes(localidade);
-    
+
+    puts("testando com o José");
     return 0;
 }
