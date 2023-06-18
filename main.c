@@ -27,7 +27,6 @@ int main(){
     */
     Localidade*localidade = criarLocalidade(4, 3);
     imprimirLigacoes(localidade);
-    actualizarDistancia(localidade, 1, 3, 200000);
-    imprimirLigacoes(localidade);    
+    printf("menor distancia %d\n", menorDistanciaAB(localidade, 1, 4)); 
     return 0;
 }

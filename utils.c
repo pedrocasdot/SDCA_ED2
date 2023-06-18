@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "utils.h"
+#include "minHeap.h"
+#include "limits.h"
 
 /*
     Usando cifra de césar para encriptar e 
@@ -56,5 +58,56 @@ bool validarSenha(char *senha){
     }
     return strlen(senha) >= 3 && hasAlpha;
 }
-
+/*
+    Algoritmo de Dijkstra para calcular a menor distancia
+    apartir de um vertice de origem até todos os possíveis vertices
+    no mesmo componente conexo
+*/
+int dijkstra( Localidade* localidade, int src, int dest){
+     
+    int V = localidade->numero_pontos;
+   
+    int dist[V + 1];    
+ 
+    MinHeap* minHeap = criarMinHeap(V + 1);
+ 
+    for (int v = 0; v <=V; ++v)
+    {
+        dist[v] = INT_MAX;
+        minHeap->array[v] = novoMinHeapNo(v,
+                                      dist[v]);
+        minHeap->pos[v] = v;
+    }
+ 
+    minHeap->array[src] =
+          novoMinHeapNo(src, dist[src]);
+    minHeap->pos[src]   = src;
+    dist[src] = 0;
+    atualizarHeap(minHeap, src, dist[src]);
+    minHeap->size = V + 1;
+ 
+    while (!vazio(minHeap))
+    {
+         MinHeapNode* minHeapNode =
+                     mininoElemento(minHeap);
+       
+        int u = minHeapNode->v;
+ 
+        No* aux = localidade->ruas[u].principal;
+        while (aux != NULL)
+        {
+            int v = aux->destino;
+         if (estaNoHeap(minHeap, v) &&
+                      dist[u] != INT_MAX &&
+              aux->distancia + dist[u] < dist[v])
+            {
+                dist[v] = dist[u] + aux->distancia;
+                atualizarHeap(minHeap, v, dist[v]);
+            }
+            aux = aux->prox;
+        }
+    }
+ 
+    return dist[dest];
+}
 

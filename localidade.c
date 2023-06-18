@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 #include "localidade.h"
+#include "utils.h"
 
 
 /*
@@ -182,7 +184,11 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
     
 }
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
-
+    int menorDistancia = dijkstra(localidade, pontoA, pontoB);
+    if(menorDistancia == INT_MAX){
+        return -1;
+    }
+    return menorDistancia;
 }
 void adicionarPonto(Localidade * localidade, int pontoA, int pontoB, int distancia){}
 void destruirSimulacao(Localidade * localidade){}
