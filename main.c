@@ -5,8 +5,8 @@
 #include "localidade.h"
 #include "menu.h"
 int main(){
-   HashTable *ht = criarTabelaHash();
-   Localidade *localidade;
+   //HashTable *ht = criarTabelaHash();
+   //Localidade *localidade;
     
     
     /*
@@ -27,10 +27,7 @@ int main(){
     */
     Localidade*localidade = criarLocalidade(4, 3);
     imprimirLigacoes(localidade);
-    removerPonto(localidade, 1);
-    puts("depois de remover 1");
-    imprimirLigacoes(localidade);
-
-    puts("testando com o José");
+    actualizarDistancia(localidade, 1, 3, 200000);
+    imprimirLigacoes(localidade);    
     return 0;
 }

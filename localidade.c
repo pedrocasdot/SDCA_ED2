@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "localidade.h"
 
 
@@ -17,6 +18,7 @@ No * novo_no(int destino, int distancia){
     no->destino = destino;
     no->distancia = distancia;
     no->prox = NULL;
+    
     return no;
 }
 
@@ -119,11 +121,48 @@ void adicionarRua(Localidade *localidade, int pontoA, int pontoB, int distancia)
 /*
     Funcao para remover rua(ARESTA) do grafo (LOCALIDADE)
 */
-Localidade *removerRua(Localidade *localidade, int pontoA, int pontoB){}
+Localidade *removerRua(Localidade *localidade, int pontoA, int pontoB){
+    
+}
 /*
     Funcao para atualizar distancia(em metros) entre dois vértices do grafo (LOCALIDADE)
 */
-void actualizarDistancia(Localidade *localidade, int pontoA, int pontoB, int novaDistancia){}
+void actualizarDistancia(Localidade *localidade, int pontoA, int pontoB, int novaDistancia){
+    No * aux = NULL;
+    if(localidade->ruas[pontoA].principal == NULL 
+            || localidade->ruas[pontoB].principal == NULL){
+                printf("Não existe ligação entre estes dois pontos");
+                return;
+    }
+    /*
+        Assumindo que o grafo é não-direcionado, então
+        se actualizarmos a distância de A ---> B, temos de alterar também
+        a distância de B ---> A
+    */
+    aux = localidade->ruas[pontoA].principal;
+    bool existeLigacao = false;
+    while(aux){
+        if(aux->destino == pontoB){
+            aux->distancia = novaDistancia;
+            existeLigacao|=true;
+        }
+        aux = aux->prox;
+    }
+    aux = localidade->ruas[pontoB].principal;
+
+    while(aux){
+        if(aux->destino == pontoA){
+            aux->distancia = novaDistancia;
+            existeLigacao|=true;
+        }
+        aux = aux->prox;
+    }
+    if(!existeLigacao){
+        printf("Não foi possível actualizar a distância entre estes dois pontos\n,porque não são adjacentes.\n");
+    }else{
+        printf("A distância entre os pontos %d e %d foi actualizada com sucesso.\n", pontoA, pontoB);
+    }
+}
 
 /*
     Imprimir todas as ligações possíveis(Ai, Aj, distancia) no grafo (LOCALIDADE )

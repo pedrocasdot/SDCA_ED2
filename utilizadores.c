@@ -63,7 +63,8 @@ bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
     if(no == NULL){
         printf("Usuário inexistente.\n");
         return false;
-    }    
+    }  
+
     if(strcmp(no->nome_usuario, nome_usuario) == 0 && strcmp(decriptarSenha(no->senha), tudoMinusculo(senha)) == 0){
         return true;
     }else{
@@ -79,8 +80,6 @@ bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
     
     while (noAtual != NULL) {
         if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
-            puts(tudoMinusculo(senha));
-            puts(decriptarSenha(noAtual->senha));
             if(strcmp(decriptarSenha(noAtual->senha),  tudoMinusculo(senha)) != 0){
                 printf("Senha de usuário incorrecta.\n");
                 return false;

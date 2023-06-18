@@ -12,7 +12,7 @@ typedef struct HashNode{
 }HashNode;
 
 typedef struct HashTable{
-	HashNode** array;
+	HashNode**array;
 }HashTable;
 
 HashTable* criarTabelaHash();
