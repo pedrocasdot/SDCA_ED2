@@ -162,7 +162,7 @@ void actualizarDistancia(Localidade *localidade, int pontoA, int pontoB, int nov
     if(!existeLigacao){
         printf("Não foi possível actualizar a distância entre estes dois pontos\n,porque não são adjacentes.\n");
     }else{
-        printf("A distância entre os pontos %d e %d foi actualizada com sucesso.\n", pontoA, pontoB);
+        printf("A distância entre os pontos %d  e %d foi actualizada com sucesso.\n", pontoA, pontoB);
     }
 }
 
@@ -180,9 +180,64 @@ void imprimirLigacoes(Localidade *localidade){
     }
 }
 
-void imprimirLigacoesOtimizadas(Localidade *localidade){
-    
+void _imprimirMST(Localidade *localidade, int pai[]) {
+    for (int i = 1; i <= localidade->numero_pontos; i++) {
+        printf ("%d <--> %d, distância de %d metros.\n"
+            pai[i], i, localidade->ruas[pai[i]]);
+    }
 }
+
+/*
+    Imprime a conexão mais barata entre pontos.
+    Consiste em construir uma árvore de expansão mínima usando o algoritmo de Prim.
+*/
+void imprimirLigacoesOtimizadas(Localidade *localidade){
+    No *aux = NULL;
+    int numv = localidade->numero_pontos;
+    bool na_mst[numv+1];      // O nó está na MST?
+    int distancia[numv+1];    // Custo de adicionar ao mst
+    int pai[numv];          // mst
+    int ponto;              // Vértice a ser processado
+    int prox_ponto;         // Próximo vértice candidato
+    int dist;               // no->distancia, valor da aresta
+    int melhor_dist;        // Atual melhor distância do princípio
+
+    for (int i = 1; i <= numv; i++) {
+        na_mst[i] = false;
+        distancia[i] = INT_MAX;
+        pai[i] = -1;
+    }
+
+    // O algoritmo começa no primeiro nó
+    // 1-index based
+    distancia[1] = 0;
+    ponto = 1;
+
+    while (na_mst[ponto] == false) {
+        na_mst[ponto] = true;
+        aux = localidade->ruas[ponto]->principal;
+        while (aux != NULL) {
+            melhor_dist = aux->destino;
+            dist = aux->distancia;
+            if ((distancia[melhor_dist] > dist) && (mst[melhor_dist] == false)) {
+                distancia[melhor_dist] = dist;
+                pai[melhor_dist] = ponto;
+            }
+            aux = aux->prox;
+        }
+    }
+
+    dist = 1;
+    melhor_dist = INT_MAX;
+    for (int i = 1; i <= numv; i++)
+        if ((na_mst[i] == false) && (melhor_dist > distancia[i])) {
+            melhor_dist = distancia[i];
+            ponto = i;
+        }
+
+    _imprimirMST(localidade, pai);
+}
+
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
     int menorDistancia = dijkstra(localidade, pontoA, pontoB);
     if(menorDistancia == INT_MAX){
