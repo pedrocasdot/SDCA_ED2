@@ -25,8 +25,10 @@ int main(){
         puts("USUARIO EXISTENTE");
     }
     */
-    Localidade*localidade = criarLocalidade(4, 3);
+    Localidade*localidade = criarLocalidade(6, 8);
     imprimirLigacoes(localidade);
+    printf("\n\n\n\n");
+    imprimirLigacoesOtimizadas(localidade);
     printf("menor distancia %d\n", menorDistanciaAB(localidade, 1, 4)); 
     return 0;
 }
