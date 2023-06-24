@@ -5,6 +5,7 @@
 #include <limits.h>
 #include "localidade.h"
 #include "utils.h"
+#include "minHeap.h"
 
 
 /*
@@ -180,10 +181,9 @@ void imprimirLigacoes(Localidade *localidade){
     }
 }
 
-void _imprimirMST(Localidade *localidade, int pai[]) {
-    for (int i = 1; i <= localidade->numero_pontos; i++) {
-        printf ("%d <--> %d, distância de %d metros.\n"
-            pai[i], i, localidade->ruas[pai[i]]);
+void _imprimirMST(int parent[], int n) {
+    for (int i = 1; i <= n; i++) {
+            printf ("%d <--> %d\n", parent[i], i);
     }
 }
 
@@ -192,50 +192,44 @@ void _imprimirMST(Localidade *localidade, int pai[]) {
     Consiste em construir uma árvore de expansão mínima usando o algoritmo de Prim.
 */
 void imprimirLigacoesOtimizadas(Localidade *localidade){
-    No *aux = NULL;
-    int numv = localidade->numero_pontos;
-    bool na_mst[numv+1];      // O nó está na MST?
-    int distancia[numv+1];    // Custo de adicionar ao mst
-    int pai[numv];          // mst
-    int ponto;              // Vértice a ser processado
-    int prox_ponto;         // Próximo vértice candidato
-    int dist;               // no->distancia, valor da aresta
-    int melhor_dist;        // Atual melhor distância do princípio
+    int V = localidade->numero_pontos;
+    int parent[V];
+    int key[V];
 
-    for (int i = 1; i <= numv; i++) {
-        na_mst[i] = false;
-        distancia[i] = INT_MAX;
-        pai[i] = -1;
+    MinHeap *heap = criarMinHeap(V);
+
+    for (int v = 1; v <= V; v++) {
+        parent[v] = -1;
+        key[v] = INT_MAX;
+        heap->array[v] = novoMinHeapNo(v, key[v]);
+        heap->pos[v] = v;
     }
 
-    // O algoritmo começa no primeiro nó
-    // 1-index based
-    distancia[1] = 0;
-    ponto = 1;
+    key[0] = 0;
+    heap->array[0] = novoMinHeapNo(0, key[0]);
+    heap->pos[0] = 0;
 
-    while (na_mst[ponto] == false) {
-        na_mst[ponto] = true;
-        aux = localidade->ruas[ponto]->principal;
-        while (aux != NULL) {
-            melhor_dist = aux->destino;
-            dist = aux->distancia;
-            if ((distancia[melhor_dist] > dist) && (mst[melhor_dist] == false)) {
-                distancia[melhor_dist] = dist;
-                pai[melhor_dist] = ponto;
+    heap->size = V;
+
+    while (!vazio(heap)) {
+        MinHeapNode *node = mininoElemento(heap);
+        int u = node->v;
+
+        No *pCrawl = localidade->ruas[u].principal;
+        while (pCrawl != NULL) {
+            int v = pCrawl->destino;
+
+            if (estaNoHeap(heap, v) && pCrawl->distancia < key[v]) {
+                    key[v] = pCrawl->distancia;
+                    parent[v] = u;
+                    atualizarHeap(heap, v, key[v]);
             }
-            aux = aux->prox;
+            
+            pCrawl = pCrawl->prox;
         }
+
+        _imprimirMST(parent, V);
     }
-
-    dist = 1;
-    melhor_dist = INT_MAX;
-    for (int i = 1; i <= numv; i++)
-        if ((na_mst[i] == false) && (melhor_dist > distancia[i])) {
-            melhor_dist = distancia[i];
-            ponto = i;
-        }
-
-    _imprimirMST(localidade, pai);
 }
 
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
