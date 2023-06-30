@@ -3,11 +3,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include "utils.h"
+#include <openssl/sha.h>
 #include "utilizadores.h"
 
 HashTable* criarTabelaHash() {
     HashTable* tabela = (HashTable*)malloc(sizeof(HashTable));
-    tabela->array = (HashNode**)malloc(TABLE_SIZE * sizeof(HashNode*));
+    tabela->array = (Usuario**)malloc(TABLE_SIZE * sizeof(Usuario*));
     for (int i = 0; i < TABLE_SIZE; i++) {
         tabela->array[i] = NULL;
     }
@@ -28,15 +29,16 @@ bool inserirUsuario(HashTable* tabela, char *nome_usuario, char * senha) {
         printf("Nome de usuário já existente no sistema.\n");
         return false;
     }
-    HashNode* novoNo = (HashNode*)malloc(sizeof(HashNode));
+
+    Usuario* novoNo = (Usuario*)malloc(sizeof(Usuario));
     novoNo->nome_usuario = strdup(nome_usuario);
-    novoNo->senha = strdup(encriptarSenha(senha));
+    novoNo->senha = hashSenha(senha);
     novoNo->prox = NULL;
 
     if (tabela->array[indice] == NULL) {
 		tabela->array[indice] = novoNo;
     } else {
-        HashNode* noAtual = tabela->array[indice];
+        Usuario* noAtual = tabela->array[indice];
         while (noAtual->prox != NULL) {
             noAtual = noAtual->prox;
         }
@@ -45,10 +47,10 @@ bool inserirUsuario(HashTable* tabela, char *nome_usuario, char * senha) {
     return true;
 }
 
-HashNode * buscarUsuario(HashTable* tabela, char *nome_usuario) {
+Usuario * buscarUsuario(HashTable* tabela, char *nome_usuario) {
     
     int indice = calcularHash(nome_usuario);
-    HashNode* noAtual = tabela->array[indice];
+    Usuario* noAtual = tabela->array[indice];
     while (noAtual != NULL) {
         if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
             return noAtual;
@@ -56,18 +58,20 @@ HashNode * buscarUsuario(HashTable* tabela, char *nome_usuario) {
         noAtual = noAtual->prox;
     }
     return NULL;
-}
+    }
 
 bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
-    HashNode *no = buscarUsuario(tabela, nome_usuario);
+    Usuario *no = buscarUsuario(tabela, nome_usuario);
     if(no == NULL){
         printf("Usuário inexistente.\n");
         return false;
-    }  
+    } 
 
-    if(strcmp(no->nome_usuario, nome_usuario) == 0 && strcmp(decriptarSenha(no->senha), tudoMinusculo(senha)) == 0){
-        return true;
-    }else{
+    unsigned char* senha_hash = hashSenha(senha);
+    bool senha_correta = memcmp(senha_hash, no->senha, SHA256_DIGEST_LENGTH) == 0;
+    if(senha_correta)
+        return senha_correta;
+    else{
         printf("Senha incorrecta, tente novamente.\n");
         return false;
     }
@@ -75,12 +79,14 @@ bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
 
 bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
     int indice = calcularHash(nome_usuario);
-    HashNode* noAtual = tabela->array[indice];
-    HashNode* noAnterior = NULL;
+    Usuario* noAtual = tabela->array[indice];
+    Usuario* noAnterior = NULL;
     
     while (noAtual != NULL) {
         if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
-            if(strcmp(decriptarSenha(noAtual->senha),  tudoMinusculo(senha)) != 0){
+            unsigned char* senha_hash = hashSenha(senha);
+            bool senha_correta = memcmp(senha_hash, noAtual->senha, SHA256_DIGEST_LENGTH) == 0;
+            if(!senha_correta){
                 printf("Senha de usuário incorrecta.\n");
                 return false;
             }
@@ -104,17 +110,19 @@ bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_
         printf("Nenhum usuario registrado\n");
         return false;
     }
-    HashNode *no = buscarUsuario(tabela, nome_usuario);
+    Usuario *no = buscarUsuario(tabela, nome_usuario);
     if(no == NULL){
         printf("Usuario inexistente\n");
         return false;
     }
-    if(strcmp(decriptarSenha(no->senha), senha_antiga) == 0){
+    unsigned char* senha_hash = hashSenha(senha_antiga);
+    bool senha_correta = memcmp(senha_hash, no->senha, SHA256_DIGEST_LENGTH) == 0;
+    if(senha_correta){
         if(!validarSenha(senha_nova)){
             printf("A senha deve ter no mínimo 3 caracteres e uma letra do alfabeto.\n");
             return false;
         }
-        no->senha = encriptarSenha(senha_nova);
+        no->senha = hashSenha(senha_nova);
         printf("A senha para o usuário %s foi alterada com sucesso.\n", nome_usuario);
     }else{
         printf("Senha inválida para este nome de usuário, tente novamente....\n");
@@ -125,9 +133,9 @@ bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_
 
 void liberarTabelaHash(HashTable* tabela) {
     for (int i = 0; i < TABLE_SIZE; i++) {
-        HashNode* noAtual = tabela->array[i];
+        Usuario* noAtual = tabela->array[i];
         while (noAtual != NULL) {
-            HashNode* noRemover = noAtual;
+            Usuario* noRemover = noAtual;
             noAtual = noAtual->prox;
             free(noRemover);
         }

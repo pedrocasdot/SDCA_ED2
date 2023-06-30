@@ -5,14 +5,14 @@
 #define TABLE_SIZE 97
 
 #include <stdbool.h>
-typedef struct HashNode{
+typedef struct Usuario{
 	char * nome_usuario;
-	char * senha;
-	struct HashNode * prox;
-}HashNode;
+	 unsigned char * senha;
+	struct Usuario * prox;
+}Usuario;
 
 typedef struct HashTable{
-	HashNode**array;
+	Usuario**array;
 }HashTable;
 
 HashTable* criarTabelaHash();
@@ -21,9 +21,9 @@ int calcularHash(char *chave);
 
 bool inserirUsuario(HashTable* tabela, char * nome_usuario, char * senha);
 
-HashNode  *buscarUsuario(HashTable* tabela, char *nome_usuario);
+Usuario  *buscarUsuario(HashTable* tabela, char *nome_usuario);
 
-bool atualizarSenhaUsuario(HashTable * tabela, char *chave, char * senha_antiga, char * senha_nova);
+bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_antiga, char * senha_nova);
 
 bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha);
 
