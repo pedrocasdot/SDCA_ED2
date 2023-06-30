@@ -6,6 +6,7 @@
 
 char *encriptarSenha(char *senha);
 char *decriptarSenha(char *senha);
+unsigned char * hashSenha(const char *senha);
 char *tudoMinusculo(char *string);
 bool validarSenha(char *senha);
 void removerNo(No * head, int ponto);

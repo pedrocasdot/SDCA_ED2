@@ -5,43 +5,22 @@
 #include <stdbool.h>
 #include "utils.h"
 #include "minHeap.h"
+#include <openssl/sha.h>
 #include "limits.h"
 
 /*
-    Usando cifra de césar para encriptar e 
-        decriptar senhas de usuários na tabela de usuaŕios.
+    Função criada para encriptar a senha de usuário,
+    usando SHA256
 */
 
-char *encriptarSenha(char *senha) {
-    char* resultado = (char*)malloc((strlen(senha) + 1) * sizeof(char));
-    for(int i = 0; i < strlen(senha); i++){
-        if(isalpha(senha[i])){
-            resultado[i]= ((tolower(senha[i]) - 'a' + 3) % 26) + 'a';
-        }else resultado[i] = senha[i];    
-    }
-    return resultado;
+unsigned char* hashSenha(const char* senha) {
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, senha, strlen(senha));
+    unsigned char* hash = (unsigned char*)malloc(SHA256_DIGEST_LENGTH);
+    SHA256_Final(hash, &sha256);
+    return hash;
 }
-
-char *decriptarSenha(char *senha) {
-    char* resultado = (char*)malloc((strlen(senha) + 1) * sizeof(char));
-    for(int i = 0; i < strlen(senha); i++){
-        if(isalpha(senha[i])){
-            resultado[i]= ((tolower(senha[i]) - 'a' - 3) % 26) + 'a';
-        }else resultado[i] = senha[i];    
-    }
-    return resultado;
-}
-
-char *tudoMinusculo(char *string) {
-    char* resultado = (char*)malloc((strlen(string) + 1) * sizeof(char));
-    for(int i = 0; i < strlen(string); i++){
-        if(isalpha(string[i])){
-            resultado[i]= tolower(string[i]);
-        }else resultado[i] = string[i];    
-    }
-    return resultado;
-}
-
 
 
 /*
@@ -57,6 +36,19 @@ bool validarSenha(char *senha){
             hasAlpha = true;
     }
     return strlen(senha) >= 3 && hasAlpha;
+}
+
+bool validarLocalidade(Localidade *localidade, int ponto){
+    bool problema  = true;
+    if(localidade == NULL){
+        printf("Localidade inexistente.\n");
+        problema = false;
+    }
+    if(!(ponto>=1 && ponto<=localidade->numero_pontos)){
+        printf("Ponto não encontrado.\n");
+        problema = false;
+    }
+    return problema;
 }
 /*
     Algoritmo de Dijkstra para calcular a menor distancia
