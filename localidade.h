@@ -1,6 +1,7 @@
 #ifndef LOCALIDADE_H
 #define LOCALIDADE_H
 
+#define CUSTO_POR_METRO 5600
 typedef struct No{
     int destino, distancia;
     struct No *prox;    
