@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include "utils.h"
-#include <openssl/sha.h>
 #include "utilizadores.h"
 
 HashTable* criarTabelaHash() {
