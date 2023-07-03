@@ -272,9 +272,24 @@ void imprimirLigacoes(Localidade *localidade){
 }
 
 void _imprimirMST(int parent[], int n) {
-    for (int i = 1; i <= n; i++) {
+    for (int i = 2; i <= n; i++) {
         printf ("%d <--> %d\n", parent[i], i);
     }
+}
+
+// A utility function to find the vertex with
+// minimum key value, from the set of vertices
+// not yet included in MST
+int minKey(int key[], bool mstSet[], int V)
+{
+    // Initialize min value
+    int min = INT_MAX, min_index;
+ 
+    for (int v = 1; v <= V; v++)
+        if (mstSet[v] == false && key[v] < min)
+            min = key[v], min_index = v;
+ 
+    return min_index;
 }
 
 /*
@@ -282,44 +297,75 @@ void _imprimirMST(int parent[], int n) {
     Consiste em construir uma árvore de expansão mínima usando o algoritmo de Prim.
 */
 void imprimirLigacoesOtimizadas(Localidade *localidade){
+   
     int V = localidade->numero_pontos;
-    int parent[V];
-    int key[V];
 
-    MinHeap *heap = criarMinHeap(V);
+    int graph[V+1][V+1];
 
-    for (int v = 1; v <= V; v++) {
-        parent[v] = -1;
-        key[v] = INT_MAX;
-        heap->array[v] = novoMinHeapNo(v, key[v]);
-        heap->pos[v] = v;
+    for (int i = 0; i <= V; i++)
+        for (int j = 0; j <= V; j++)
+            graph[i][j] = 0;
+    
+
+    for (int i = 1; i <= V; i++) {
+        No *aux = localidade->ruas[i].principal;
+        while (aux) {
+            graph[i][aux->destino] = aux->distancia;
+            aux = aux->prox;
+        }        
     }
 
-    key[0] = 0;
-    heap->array[0] = novoMinHeapNo(0, key[0]);
-    heap->pos[0] = 0;
+    for (int i = 0; i <= V; i++) {
+        for (int j = 0; j <= V; j++)
+            printf("%d ", graph[i][j]);
+        printf("\n");
+    }    
 
-    heap->size = V;
+    // Array to store constructed MST
+    int parent[V+1];
+    // Key values used to pick minimum weight edge in cut
+    int key[V+1];
+    // To represent set of vertices included in MST
+    bool mstSet[V+1];
+ 
+    // Initialize all keys as INFINITE
+    for (int i = 1; i <= V; i++)
+        key[i] = INT_MAX, mstSet[i] = false;
+ 
+    // Always include first 1st vertex in MST.
+    // Make key 0 so that this vertex is picked as first
+    // vertex.
+    key[1] = 0;
+   
+    // First node is always root of MST
+    parent[1] = -1;
+ 
+    // The MST will have V vertices
+    for (int count = 0; count < V - 1; count++) {
+         
+        // Pick the minimum key vertex from the
+        // set of vertices not yet included in MST
+        int u = minKey(key, mstSet, V);
+ 
+        // Add the picked vertex to the MST Set
+        mstSet[u] = true;
+ 
+        // Update key value and parent index of
+        // the adjacent vertices of the picked vertex.
+        // Consider only those vertices which are not
+        // yet included in MST
+        for (int v = 1; v <= V; v++)
+ 
+            // graph[u][v] is non zero only for adjacent
+            // vertices of m mstSet[v] is false for vertices
+            // not yet included in MST Update the key only
+            // if graph[u][v] is smaller than key[v]
+            if (graph[u][v] && mstSet[v] == false
+                && graph[u][v] < key[v])
+                parent[v] = u, key[v] = graph[u][v]; 
 
-    while (!vazio(heap)) {
-        MinHeapNode *node = mininoElemento(heap);
-        int u = node->v;
-
-        No *pCrawl = localidade->ruas[u].principal;
-        while (pCrawl != NULL) {
-            int v = pCrawl->destino;
-
-            if (estaNoHeap(heap, v) && pCrawl->distancia < key[v]) {
-                    key[v] = pCrawl->distancia;
-                    parent[v] = u;
-                    atualizarHeap(heap, v, key[v]);
-            }
-            
-            pCrawl = pCrawl->prox;
-        }
-
-        _imprimirMST(parent, V);
     }
+    _imprimirMST(parent, V);
 }
 
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
