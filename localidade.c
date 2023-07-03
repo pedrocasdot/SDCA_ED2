@@ -315,12 +315,6 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
         }        
     }
 
-    for (int i = 0; i <= V; i++) {
-        for (int j = 0; j <= V; j++)
-            printf("%d ", graph[i][j]);
-        printf("\n");
-    }    
-
     // Array to store constructed MST
     int parent[V+1];
     // Key values used to pick minimum weight edge in cut
