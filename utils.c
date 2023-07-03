@@ -5,21 +5,31 @@
 #include <stdbool.h>
 #include "utils.h"
 #include "minHeap.h"
-#include <openssl/sha.h>
 #include "limits.h"
 
 /*
-    Função criada para encriptar a senha de usuário,
-    usando SHA256
+    Função hash criada criada para encriptar a senha de usuário,
 */
 
-unsigned char* hashSenha(const char* senha) {
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, senha, strlen(senha));
-    unsigned char* hash = (unsigned char*)malloc(SHA256_DIGEST_LENGTH);
-    SHA256_Final(hash, &sha256);
-    return hash;
+unsigned long long hashSenha(const char* str) {
+    unsigned long long hash = 0;
+
+    unsigned long long prime = 1099511628211ULL;  // Primo adequado para hash
+    unsigned long long offset = 14695981039346656037ULL;  // Offset para hash
+
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        hash ^= str[i];
+        hash *= prime;
+    }
+
+    hash ^= (hash >> 33);
+    hash *= 0xff51afd7ed558ccdULL;
+    hash ^= (hash >> 33);
+    hash *= 0xc4ceb9fe1a85ec53ULL;
+    hash ^= (hash >> 33);
+
+    return hash + offset;
 }
 
 

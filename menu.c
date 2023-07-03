@@ -17,7 +17,8 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 	scanf("%d\n",& opcao);
 
 	switch (opcao)
-	{ case 1:
+	{ 
+		case 1:
 		int pontos,ruas;
 		printf("digite os numero pontos:\n ");
 		scanf("%d\n",& pontos);
@@ -74,13 +75,8 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 				int pontoA,pontoB,distancia;
 				printf("digite o ponto A:\n ");
 				scanf("%d",& pontoA);
-				printf("digite o ponto B:\n ");
-				scanf("%d",& pontoB);
-				printf("digite a distancia:\n ");
-				scanf("%d",& distancia);
-				adicionarPonto(localidade,pontoA,pontoB,distancia);
+				adicionarPonto(localidade,pontoA);
 				break;
-
 				//remover ponto
 			case 2:
 				int ponto;
@@ -100,7 +96,6 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 				scanf("%d",& distancia);
 				adicionarRua(localidade,pontoA,pontoB,distancia);
 				break;
-
 				//remover rua 
 			case 4:
 				int pontoA,pontoB;
@@ -110,7 +105,6 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 				scanf("%d",& pontoB);
 				removerRua(localidade,pontoA,pontoB);
 				break;
-
 				//Actualizar distancia
 			case 5:
 				int pontoA,pontoB,novaDistancia;
@@ -132,7 +126,6 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 			case 7:
 				imprimirLigacoesOtimizadas(localidade);
 				break;
-
 				//Custo optimo entre dois pontos
 			case 8:
 				int pontoA,pontoB;
@@ -162,6 +155,4 @@ void menu_iniciar(HashTable *tabela,Localidade *localidade)
 		printf("digite novamente o numero\n");
 
 	}
-
-
 }

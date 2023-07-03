@@ -32,7 +32,7 @@ bool inserirUsuario(HashTable* tabela, char *nome_usuario, char * senha) {
 
     Usuario* novoNo = (Usuario*)malloc(sizeof(Usuario));
     novoNo->nome_usuario = strdup(nome_usuario);
-    novoNo->senha = hashSenha(senha);
+    novoNo->senhaHasheada = hashSenha(senha);
     novoNo->prox = NULL;
 
     if (tabela->array[indice] == NULL) {
@@ -67,8 +67,8 @@ bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
         return false;
     } 
 
-    unsigned char* senha_hash = hashSenha(senha);
-    bool senha_correta = memcmp(senha_hash, no->senha, SHA256_DIGEST_LENGTH) == 0;
+    unsigned long long senha_hash = hashSenha(senha);
+    bool senha_correta = senha_hash == no->senhaHasheada;
     if(senha_correta)
         return senha_correta;
     else{
@@ -84,8 +84,8 @@ bool removerUsuario(HashTable* tabela, char *nome_usuario, char *senha) {
     
     while (noAtual != NULL) {
         if (strcmp(noAtual->nome_usuario, nome_usuario) == 0) {
-            unsigned char* senha_hash = hashSenha(senha);
-            bool senha_correta = memcmp(senha_hash, noAtual->senha, SHA256_DIGEST_LENGTH) == 0;
+            unsigned long long senha_hash = hashSenha(senha);
+            bool senha_correta = senha_hash == noAtual->senhaHasheada;
             if(!senha_correta){
                 printf("Senha de usuário incorrecta.\n");
                 return false;
@@ -115,14 +115,10 @@ bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_
         printf("Usuario inexistente\n");
         return false;
     }
-    unsigned char* senha_hash = hashSenha(senha_antiga);
-    bool senha_correta = memcmp(senha_hash, no->senha, SHA256_DIGEST_LENGTH) == 0;
+     unsigned long long senha_hash = hashSenha(senha_antiga);
+    bool senha_correta = senha_hash == no->senhaHasheada;
     if(senha_correta){
-        if(!validarSenha(senha_nova)){
-            printf("A senha deve ter no mínimo 3 caracteres e uma letra do alfabeto.\n");
-            return false;
-        }
-        no->senha = hashSenha(senha_nova);
+        no->senhaHasheada = hashSenha(senha_nova);
         printf("A senha para o usuário %s foi alterada com sucesso.\n", nome_usuario);
     }else{
         printf("Senha inválida para este nome de usuário, tente novamente....\n");

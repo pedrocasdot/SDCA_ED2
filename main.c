@@ -5,30 +5,31 @@
 #include "localidade.h"
 #include "menu.h"
 int main(){
-   //HashTable *ht = criarTabelaHash();
+  // HashTable *ht = criarTabelaHash();
    //Localidade *localidade;
     
-    
-    /*
     HashTable *ht = criarTabelaHash();
     
-    if(inserirUsuario(ht, "teste", "teste")){
+    if(inserirUsuario(ht, "teste", "123")){
         puts("criado com sucesso");
     }
-    if(atualizarSenhaUsuario(ht, "", "teste", "teste")){
+    if(atualizarSenhaUsuario(ht, "teste", "123", "teste")){
         puts("FEITOOO");
     }
-    if(removerUsuario(ht, "teste", "ABC123")){
+    if(removerUsuario(ht, "teste", "teste")){
         puts("GOOO");
     }
     if(buscarUsuario(ht, "teste") != NULL){
         puts("USUARIO EXISTENTE");
     }
-    */
-    Localidade*localidade = criarLocalidade(6, 8);
+
+    Localidade*localidade = criarLocalidade(10, 14);
     imprimirLigacoes(localidade);
-    printf("\n\n\n\n");
-    imprimirLigacoesOtimizadas(localidade);
-    printf("menor distancia %d\n", menorDistanciaAB(localidade, 1, 4)); 
+    //imprimirLigacoesOtimizadas(localidade);
+    adicionarPonto(localidade, 11);
+
+    printf("menor distancia %d\n", menorDistanciaAB(localidade, 1, 11)); 
+    imprimirLigacoes(localidade);
+    //destruirSimulacao(localidade);
     return 0;
 }

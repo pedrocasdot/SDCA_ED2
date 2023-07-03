@@ -7,7 +7,7 @@
 #include <stdbool.h>
 typedef struct Usuario{
 	char * nome_usuario;
-	 unsigned char * senha;
+	unsigned long long  senhaHasheada;
 	struct Usuario * prox;
 }Usuario;
 
