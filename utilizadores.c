@@ -15,7 +15,7 @@ HashTable* criarTabelaHash() {
 }
 
 int calcularHash(char *chave) {
-    int hash_soma = 0;
+    unsigned long long int hash_soma = 0ll;
 	for(int i = 0; chave[i] != '\0'; i++){
 		hash_soma = hash_soma * 31 + chave[i];
 	}
@@ -71,7 +71,6 @@ bool entrar(HashTable* tabela, char *nome_usuario, char *senha){
     if(senha_correta)
         return senha_correta;
     else{
-        printf("Senha incorrecta, tente novamente.\n");
         return false;
     }
 }
@@ -123,6 +122,17 @@ bool atualizarSenhaUsuario(HashTable * tabela, char *nome_usuario, char * senha_
         printf("Senha inválida para este nome de usuário, tente novamente....\n");
         return false;
     }
+    return true;
+}
+
+bool tabelaVazia(HashTable *tabela) {
+    if (tabela == NULL)
+        return false;
+
+    for (int i = 0; i < TABLE_SIZE; i++)
+        if (tabela->array[i])
+            return false;
+    
     return true;
 }
 
