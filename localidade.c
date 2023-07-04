@@ -262,27 +262,34 @@ void imprimirLigacoes(Localidade *localidade){
         return;
     }
     int i = 0;
+    unsigned long long custo_total = 0;
     for(; i < localidade->numero_pontos; i++){
         No * aux = localidade->ruas[i + 1].principal;
         while(aux){
+            custo_total+=aux->distancia * 1ULL * CUSTO_POR_METRO;
             printf("%d <--> %d distancia de %d metros.\n", i + 1, aux->destino, aux->distancia);
             aux = aux->prox;
         }
     }
+     printf("CUSTO TOTAL: %llu kz.\n", custo_total);
 }
 
-void _imprimirMST(int parent[], int n) {
+void _imprimirMST(int parent[], int n, int **grafo) {
+    unsigned long long custo_total = 0;
     for (int i = 2; i <= n; i++) {
-        printf ("%d <--> %d\n", parent[i], i);
+        custo_total+=grafo[i][parent[i]]*1LL* CUSTO_POR_METRO * 1LL;
+        printf ("%d <--> %d distancia de %d metros.\n", parent[i], i, grafo[i][parent[i]]);
+        
     }
+    printf("CUSTO TOTAL OPTIMO: %lli.\n", custo_total);
 }
 
-// A utility function to find the vertex with
-// minimum key value, from the set of vertices
-// not yet included in MST
+/* função para encontrar o vértice com
+ valor mínimo da chave, do conjunto de vértices
+ ainda não incluído no MST
+*/
 int minKey(int key[], bool mstSet[], int V)
 {
-    // Initialize min value
     int min = INT_MAX, min_index;
  
     for (int v = 1; v <= V; v++)
@@ -300,8 +307,10 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
    
     int V = localidade->numero_pontos;
 
-    int graph[V+1][V+1];
-
+    int** graph = (int**)malloc((V + 1) * sizeof(int*));
+    for (int i = 0; i <=V; i++) {
+        graph[i] = (int*)malloc((V + 1) * sizeof(int));
+    }
     for (int i = 0; i <= V; i++)
         for (int j = 0; j <= V; j++)
             graph[i][j] = 0;
@@ -311,55 +320,34 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
         No *aux = localidade->ruas[i].principal;
         while (aux) {
             graph[i][aux->destino] = aux->distancia;
+            graph[aux->destino][i] = aux->distancia;
             aux = aux->prox;
         }        
     }
 
-    // Array to store constructed MST
     int parent[V+1];
-    // Key values used to pick minimum weight edge in cut
     int key[V+1];
-    // To represent set of vertices included in MST
     bool mstSet[V+1];
  
-    // Initialize all keys as INFINITE
     for (int i = 1; i <= V; i++)
         key[i] = INT_MAX, mstSet[i] = false;
  
-    // Always include first 1st vertex in MST.
-    // Make key 0 so that this vertex is picked as first
-    // vertex.
     key[1] = 0;
-   
-    // First node is always root of MST
     parent[1] = -1;
  
-    // The MST will have V vertices
     for (int count = 0; count < V - 1; count++) {
          
-        // Pick the minimum key vertex from the
-        // set of vertices not yet included in MST
         int u = minKey(key, mstSet, V);
+      mstSet[u] = true;
  
-        // Add the picked vertex to the MST Set
-        mstSet[u] = true;
- 
-        // Update key value and parent index of
-        // the adjacent vertices of the picked vertex.
-        // Consider only those vertices which are not
-        // yet included in MST
         for (int v = 1; v <= V; v++)
  
-            // graph[u][v] is non zero only for adjacent
-            // vertices of m mstSet[v] is false for vertices
-            // not yet included in MST Update the key only
-            // if graph[u][v] is smaller than key[v]
             if (graph[u][v] && mstSet[v] == false
                 && graph[u][v] < key[v])
                 parent[v] = u, key[v] = graph[u][v]; 
 
     }
-    _imprimirMST(parent, V);
+    _imprimirMST(parent, V, graph);
 }
 
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
