@@ -113,3 +113,12 @@ int dijkstra( Localidade* localidade, int src, int dest){
     return dist[dest];
 }
 
+int ler_linha(char str[], int n) {
+    char ch, i = 0;
+    while ((ch = getchar()) != '\n')
+        if (i < n)
+            str[i++] = ch;
+
+    str[i] = '\0';
+    return i;
+}

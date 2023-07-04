@@ -1,5 +1,6 @@
- #ifndef menu
- #define menu
-  
- void menu_iniciar(HashTable *tabela,Localidade *localidade);
+ #ifndef MENU_H
+ #define MENU_H
+
+ void iniciar(); 
+
  #endif

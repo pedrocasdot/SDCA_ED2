@@ -11,4 +11,5 @@ char *tudoMinusculo(char *string);
 bool validarSenha(char *senha);
 void removerNo(No * head, int ponto);
 int dijkstra( Localidade* localidade, int src, int dest);
+int ler_linha(char str[], int n);
 #endif
