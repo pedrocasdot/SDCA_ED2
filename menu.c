@@ -9,7 +9,7 @@ int obter_opcao(int min, int max);
 int imprimir_menu_iniciar_e_obter_opcao();
 void iniciar();
 Localidade *opcao_criar_localidade();
-HashTable *opcao_cadastrar_utilizadores();
+HashTable *opcao_cadastrar_utilizadores(HashTable *utilizadores);
 void opcao_alterar_senha(HashTable *utilizadores);
 void opcao_remover_utilizador(HashTable *utilizadores);
 int opcao_simulacao(Localidade *localidade, HashTable *utilizadores);
@@ -38,7 +38,7 @@ void iniciar() {
 				break;
 
 			case 2:
-				utilizadores = opcao_cadastrar_utilizadores();
+				utilizadores = opcao_cadastrar_utilizadores(utilizadores);
 				break;
 
 			case 3:
@@ -111,8 +111,11 @@ Localidade *opcao_criar_localidade() {
 }
 
 
-HashTable *opcao_cadastrar_utilizadores() {
-	HashTable *users = criarTabelaHash();
+HashTable *opcao_cadastrar_utilizadores(HashTable *utilizadores) {
+	HashTable *users = utilizadores;
+	if (utilizadores == NULL) 
+		users = criarTabelaHash();
+	
 	int qtd_users;
 	while(true) {
 		printf ("Quantos usuários pretende cadastrar?[1-%d]: ", TABLE_SIZE);
@@ -136,8 +139,9 @@ HashTable *opcao_cadastrar_utilizadores() {
 		ler_linha(senha, TAM_STR);
 
 		inserirUsuario(users, nome_usuario, senha);
-		return users;
 	}
+
+	return users;
 }
 
 void opcao_alterar_senha(HashTable *utilizadores) {
