@@ -127,12 +127,17 @@ HashTable *opcao_cadastrar_utilizadores(HashTable *utilizadores) {
 		}
 	}
 
+	/* 
+		Remove algum '\n' do stdin, se houver.
+		Melhor curso de ação seria escrever uma solução personalisada para leitura de dados.
+	*/
+	getchar(); 
 	for (int i = 1; i <= qtd_users; i++) {
 		char nome_usuario[TAM_STR + 1]; // TAM_STR + 1 para acomodar o '\0'
 		char senha[TAM_STR + 1];
 		printf ("Usuário %d:\n", i);
+
 		printf ("Nome de usuário: ");
-		getchar(); // limpar o buffer
 		ler_linha(nome_usuario, TAM_STR);
 
 		printf ("Senha: ");
