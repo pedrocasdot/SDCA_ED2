@@ -274,9 +274,10 @@ void imprimirLigacoes(Localidade *localidade){
      printf("CUSTO TOTAL: %llu kz.\n", custo_total);
 }
 
-void _imprimirMST(int parent[], int n, int **grafo) {
+void _imprimirMST(int parent[], int n, int grafo[n+1][n+1], bool naMst[n + 1]) {
     unsigned long long custo_total = 0;
     for (int i = 2; i <= n; i++) {
+        if (naMst[i] == false)continue;
         custo_total+=grafo[i][parent[i]]*1LL* CUSTO_POR_METRO * 1LL;
         printf ("%d <--> %d distancia de %d metros.\n", parent[i], i, grafo[i][parent[i]]);
         
@@ -306,11 +307,11 @@ int minKey(int key[], bool mstSet[], int V)
 void imprimirLigacoesOtimizadas(Localidade *localidade){
    
     int V = localidade->numero_pontos;
-
-    int** graph = (int**)malloc((V + 1) * sizeof(int*));
+    int graph[V+1][V+1];
+    /*int** graph = (int**)malloc((V + 1) * sizeof(int*));
     for (int i = 0; i <=V; i++) {
         graph[i] = (int*)malloc((V + 1) * sizeof(int));
-    }
+    }*/
     for (int i = 0; i <= V; i++)
         for (int j = 0; j <= V; j++)
             graph[i][j] = 0;
@@ -328,7 +329,8 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
     int parent[V+1];
     int key[V+1];
     bool mstSet[V+1];
- 
+    bool visitado[V + 1];
+    memset(visitado, true, sizeof(visitado));
     for (int i = 1; i <= V; i++)
         key[i] = INT_MAX, mstSet[i] = false;
  
@@ -341,13 +343,20 @@ void imprimirLigacoesOtimizadas(Localidade *localidade){
       mstSet[u] = true;
  
         for (int v = 1; v <= V; v++)
- 
+
             if (graph[u][v] && mstSet[v] == false
                 && graph[u][v] < key[v])
                 parent[v] = u, key[v] = graph[u][v]; 
 
     }
-    _imprimirMST(parent, V, graph);
+    for (int i = 1; i <= V; i++) {
+        int cnt = 0;
+        for (int j = 1; j <= V; j++) {
+            if(graph[i][j] == 0)cnt++;
+        }
+        if(cnt == V)visitado[i] = false;
+    }
+    _imprimirMST(parent, V, graph, visitado);
 }
 
 int menorDistanciaAB(Localidade * localidade, int pontoA, int pontoB){
@@ -381,7 +390,8 @@ void adicionarPonto(Localidade * localidade, int pontoA){
         }
     }
     int numPontosAnterior = localidade->numero_pontos;
-    localidade->numero_pontos = pontoA;
+    if (pontoA > localidade->numero_pontos)
+        localidade->numero_pontos = pontoA;
     localidade->ruas = (AdjList *)realloc(localidade->ruas, (localidade->numero_pontos  + 1)* sizeof(AdjList));
     
     int i;
@@ -394,7 +404,7 @@ void adicionarPonto(Localidade * localidade, int pontoA){
     int pontoB, distancia;
     for(i = 0; i<numero_ligacoes; i++){
         printf("%d - Digite o ponto e a distancia para a ligação do ponto %d\n", i + 1, pontoA);
-        scanf("%d%d", &pontoB, &distancia);
+        scanf("%d %d", &pontoB, &distancia);
         adicionarRua(localidade, pontoA, pontoB, distancia);
     }
     printf("Ponto adicionado com sucesso\n");
